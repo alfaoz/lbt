@@ -27,12 +27,13 @@ class Button(val id: String, var x: Int = 0, var y: Int = 0, var w: Int = 0, var
     fun contains(px: Double, py: Double): Boolean =
         w > 0 && px >= x && px < x + w && py >= y && py < y + h
 
-    fun draw(g: GuiGraphicsExtractor, font: Font, label: String, mouseX: Int, mouseY: Int) {
+    fun draw(g: GuiGraphicsExtractor, font: Font, label: String, mouseX: Int, mouseY: Int, active: Boolean = false) {
         val hovered = contains(mouseX.toDouble(), mouseY.toDouble())
-        g.fill(x, y, x + w, y + h, if (hovered) PanelColors.BUTTON_HOVER else PanelColors.BUTTON)
+        val fill = if (hovered || active) PanelColors.BUTTON_HOVER else PanelColors.BUTTON
+        g.fill(x, y, x + w, y + h, fill)
         val tx = x + (w - font.width(label)) / 2
         val ty = y + (h - font.lineHeight) / 2 + 1
-        g.text(font, label, tx, ty, PanelColors.TEXT)
+        g.text(font, label, tx, ty, if (active) PanelColors.GOLD else PanelColors.TEXT)
     }
 }
 

@@ -26,6 +26,65 @@ class LiveDebug {
             .getInputStream().bufferedReader().readText()
 
     @Test
+    fun bouquetOfLies() {
+        val tag = "BOUQUET_OF_LIES"
+        val comps = CoflnetJson.parseAuctions(fetch("https://sky.coflnet.com/api/auctions/tag/$tag/sold?pageSize=500"), tag)
+        val bins = (
+            CoflnetJson.parseAuctions(fetch("https://sky.coflnet.com/api/auctions/tag/$tag/active/bin"), tag) +
+                CoflnetJson.parseAuctions(fetch("https://sky.coflnet.com/api/auctions/tag/$tag/active/bin?Rarity=MYTHIC"), tag)
+            ).distinct()
+        val bazaar = JsonParser.parseString(fetch("https://api.hypixel.net/v2/skyblock/bazaar"))
+            .asJsonObject.getAsJsonObject("products")
+        val prices = object : PriceSource {
+            override fun bazaarSell(productId: String) =
+                bazaar.getAsJsonObject(productId)?.getAsJsonObject("quick_status")?.get("sellPrice")?.asDouble?.takeIf { it > 0 }
+            override fun bazaarBuy(productId: String) =
+                bazaar.getAsJsonObject(productId)?.getAsJsonObject("quick_status")?.get("buyPrice")?.asDouble?.takeIf { it > 0 }
+            override fun lowestBin(tag: String): Double? = null
+        }
+        val repo = RepoData(
+            valueRules = CommunityRepoClient.parseValueRules(
+                JsonParser.parseString(fetch("https://raw.githubusercontent.com/hannibal002/SkyHanni-REPO/main/constants/Items.json")).asJsonObject,
+            ),
+            essenceCosts = CommunityRepoClient.parseEssenceCosts(
+                JsonParser.parseString(fetch("https://raw.githubusercontent.com/NotEnoughUpdates/NotEnoughUpdates-REPO/master/constants/essencecosts.json")).asJsonObject,
+            ),
+            reforgeStones = CommunityRepoClient.parseReforgeStones(
+                JsonParser.parseString(fetch("https://raw.githubusercontent.com/NotEnoughUpdates/NotEnoughUpdates-REPO/master/constants/reforgestones.json")).asJsonObject,
+            ),
+        )
+
+        // The user's sword: Withered BOL, mythic (recombed), 5 stars, fuming 5 (hpc 15).
+        val target = ItemAttributes(
+            itemId = tag, tier = "MYTHIC", recombobulated = true, upgradeLevel = 5, dungeonItem = true,
+            hotPotatoCount = 15, reforge = "withered",
+            enchants = mapOf(
+                "champion" to 10, "vampirism" to 6, "sharpness" to 6, "critical" to 6,
+                "ender_slayer" to 6, "cubism" to 5, "giant_killer" to 6, "smite" to 7,
+            ),
+        )
+        val settings = ValuationSettings(manualDiscountAdjustment = 0.06)
+        val v = Valuator.estimate(target, comps, prices, repo, settings, bins)!!
+        println("=== $tag (window=${settings.priceWindowHours}h halfLife=${settings.recencyHalfLifeHours}h) ===")
+        println("fair=${"%,.0f".format(v.fairValue)} offer=${"%,.0f".format(v.suggestedOffer)} n=${v.compCount} ceilingBound=${v.ceilingBound}")
+        println("base=${v.baseValue?.let { "%,.0f".format(it) }} partsTotal=${"%,.0f".format(v.partsTotal)}")
+        println("lowestBin=${v.lowestBin?.let { "%,.0f".format(it) }} binAnchor=${v.binAnchor?.let { "%,.0f".format(it) }}")
+        v.notes.forEach { println("note: $it") }
+
+        // Parameter sweep: how do half-life and window drive the estimate in this rally?
+        for (hl in listOf(24.0, 12.0, 6.0, 3.0)) {
+            val s2 = settings.copy(recencyHalfLifeHours = hl)
+            val r = Valuator.estimate(target, comps, prices, repo, s2, bins)!!
+            println("hl=${hl}h w=168h: fair=${"%,.0f".format(r.fairValue)} offer=${"%,.0f".format(r.suggestedOffer)} n=${r.compCount}")
+        }
+        for (w in listOf(48, 24, 12)) {
+            val s2 = settings.copy(priceWindowHours = w)
+            val r = Valuator.estimate(target, comps, prices, repo, s2, bins)!!
+            println("hl=24h w=${w}h: fair=${"%,.0f".format(r.fairValue)} offer=${"%,.0f".format(r.suggestedOffer)} n=${r.compCount}")
+        }
+    }
+
+    @Test
     fun shadowAssassinHelmet() {
         val tag = "STARRED_SHADOW_ASSASSIN_HELMET"
         val comps = CoflnetJson.parseAuctions(fetch("https://sky.coflnet.com/api/auctions/tag/$tag/sold?pageSize=500"), tag)

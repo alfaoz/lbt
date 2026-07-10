@@ -163,6 +163,63 @@ class ValuatorTest {
         assertTrue(v.fairValue > 5_000_000.0, "candied 3M sales must not drag the estimate (fair=${v.fairValue})")
     }
 
+    // --- trending markets: the Bouquet of Lies case --------------------------------------------
+
+    private fun timedComp(price: Double, hoursAgo: Double, now: Long = 1_800_000_000_000L) =
+        Comp(price = price, count = 1, bin = true, endedAtMillis = now - (hoursAgo * 3_600_000).toLong(),
+             attributes = ItemAttributes(itemId = "TEST_ITEM"))
+
+    @Test
+    fun `a rallying market prices at today's level, not last week's`() {
+        // BOL live case: sold ~30M three days ago, ~55M in the last 12h. A percentile over the
+        // mixed pool said ~34M; detrending must land the estimate near the fresh cluster.
+        val comps = (1..30).map { timedComp(30_000_000.0 + it * 100_000, hoursAgo = 60.0 + it) } +
+            (1..20).map { timedComp(40_000_000.0 + it * 100_000, hoursAgo = 24.0 + it / 2.0) } +
+            (1..8).map { timedComp(55_000_000.0 + it * 200_000, hoursAgo = it.toDouble()) }
+        val v = assertNotNull(
+            Valuator.estimate(ItemAttributes(itemId = "TEST_ITEM"), comps, Fixtures.MapPrices(), Fixtures.bareRules, settings),
+        )
+        assertTrue(v.fairValue > 48_000_000.0, "rally must lift the estimate to the fresh level (fair=${v.fairValue})")
+        assertTrue(v.notes.any { it.contains("market moved") }, "drift note must surface")
+    }
+
+    @Test
+    fun `a crashing market prices at today's level, protecting the buyer`() {
+        // Symmetric: sold ~55M days ago, ~30M now. Offering last week's price overpays.
+        val comps = (1..8).map { timedComp(30_000_000.0 + it * 200_000, hoursAgo = it.toDouble()) } +
+            (1..20).map { timedComp(40_000_000.0 + it * 100_000, hoursAgo = 24.0 + it / 2.0) } +
+            (1..30).map { timedComp(55_000_000.0 + it * 100_000, hoursAgo = 60.0 + it) }
+        val v = assertNotNull(
+            Valuator.estimate(ItemAttributes(itemId = "TEST_ITEM"), comps, Fixtures.MapPrices(), Fixtures.bareRules, settings),
+        )
+        assertTrue(v.fairValue < 36_000_000.0, "crash must drop the estimate to the fresh level (fair=${v.fairValue})")
+    }
+
+    @Test
+    fun `a flat market is untouched by detrending`() {
+        val comps = (1..40).map { timedComp(20_000_000.0 + (it % 5) * 100_000, hoursAgo = it * 2.0) }
+        val v = assertNotNull(
+            Valuator.estimate(ItemAttributes(itemId = "TEST_ITEM"), comps, Fixtures.MapPrices(), Fixtures.bareRules, settings),
+        )
+        assertTrue(v.fairValue in 19_500_000.0..21_000_000.0, "flat market must stay put (fair=${v.fairValue})")
+        assertTrue(v.notes.none { it.contains("market moved") })
+    }
+
+    @Test
+    fun `price window cuts old comps but measures from the newest sale`() {
+        // 12h window on data whose newest sale is days in the past (recorded fixtures).
+        val old = (1..10).map { timedComp(50_000_000.0, hoursAgo = 200.0 + it) }
+        val fresh = (1..6).map { timedComp(30_000_000.0 + it * 50_000, hoursAgo = 190.0 + it * 0.5) }
+        val v = assertNotNull(
+            Valuator.estimate(
+                ItemAttributes(itemId = "TEST_ITEM"), old + fresh, Fixtures.MapPrices(), Fixtures.bareRules,
+                settings.copy(priceWindowHours = 12),
+            ),
+        )
+        assertEquals(6, v.compCount, "only the newest 12h (relative to the newest sale) may count")
+        assertTrue(v.fairValue < 35_000_000.0)
+    }
+
     // --- ask-wall interactions -----------------------------------------------------------------
 
     @Test

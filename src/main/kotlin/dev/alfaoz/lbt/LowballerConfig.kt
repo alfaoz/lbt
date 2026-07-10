@@ -28,6 +28,9 @@ data class LowballerConfig(
     var itemPanelVisible: Boolean = true,
     /** Diagnostic "N part(s) had no market price" line - off unless enabled in the config screen. */
     var showUnpricedPartsNote: Boolean = false,
+    /** Comp-pool window (12h / 3d / 7d buttons in the panel). Detrending prices every window
+     * at today's level, so this mostly trades sample size against responsiveness. */
+    var priceWindowHours: Int = 168,
     var panelPositions: MutableMap<String, IntArray> = mutableMapOf(),
 ) {
     fun valuationSettings() = ValuationSettings(
@@ -40,6 +43,7 @@ data class LowballerConfig(
         manualDiscountAdjustment = manualDiscountAdjustment,
         impatiencePremium = impatiencePremium,
         haircutOverrides = haircutOverrides,
+        priceWindowHours = if (priceWindowHours > 0) priceWindowHours else 168,
     )
 
     fun nudgeManualDiscount(delta: Double) {
@@ -82,8 +86,11 @@ data class LowballerConfig(
                 return default
             }
             return try {
-                Files.newBufferedReader(path).use { gson.fromJson(it, LowballerConfig::class.java) }
+                val loaded = Files.newBufferedReader(path).use { gson.fromJson(it, LowballerConfig::class.java) }
                     ?: LowballerConfig()
+                // Gson bypasses Kotlin defaults for fields missing from older config files.
+                if (loaded.priceWindowHours <= 0) loaded.priceWindowHours = 168
+                loaded
             } catch (e: Exception) {
                 LowballerClient.logger.error("Failed to load lowballer config, using defaults", e)
                 LowballerConfig()

@@ -26,6 +26,11 @@ data class ValuationSettings(
     /** Asks above this multiple of the sold-comp estimate are treated as hopeful, not evidence -
      * sold prices outrank listings ("320M ask on an item that sells for 15M"). */
     val inflatedAskFactor: Double = 1.5,
+    /** A sale this many hours older than the newest counts half as much. Keeps the estimate
+     * tracking rallies/crashes instead of averaging in stale prices. */
+    val recencyHalfLifeHours: Double = 24.0,
+    /** Hard cutoff for the comp pool, relative to the newest sale (user-selectable in the UI). */
+    val priceWindowHours: Int = 168,
 ) {
     fun haircutFor(kind: PartKind): Double = haircutOverrides[kind.name] ?: kind.defaultHaircut
 
@@ -119,9 +124,70 @@ object Valuator {
         }
 
         // --- sold comps -> base distribution --------------------------------------------------
-        val usableComps = filterComps(target, comps, settings, notes, settings.minComparableSamples).comps
-        val trimmedBases = trimOutliers(usableComps.mapNotNull(::compBase), settings.minComparableSamples)
-        val base = if (trimmedBases.isNotEmpty()) percentile(trimmedBases.sorted(), settings.fairValuePercentile) else null
+        val matchedComps = filterComps(target, comps, settings, notes, settings.minComparableSamples).comps
+        // Hard window (user-selectable), measured from the newest sale in the pool so recorded
+        // fixtures behave exactly like live data regardless of when they were captured.
+        val newestSale = matchedComps.mapNotNull { it.endedAtMillis }.maxOrNull()
+        val windowMillis = settings.priceWindowHours * 3_600_000L
+        val usableComps = if (newestSale == null) matchedComps else matchedComps.filter {
+            val t = it.endedAtMillis ?: return@filter true
+            newestSale - t <= windowMillis
+        }
+
+        // Time-decayed bases: a sale N hours older than the newest counts 2^(-N/halfLife) as
+        // much. In a flat market weights are near-uniform and this is a no-op; in a rally or
+        // crash the estimate follows the fresh cluster instead of averaging in stale prices.
+        val halfLifeHours = settings.recencyHalfLifeHours.coerceAtLeast(0.1)
+        fun weightOf(comp: Comp): Double {
+            val t = comp.endedAtMillis ?: return 1.0
+            if (newestSale == null) return 1.0
+            val ageHours = (newestSale - t) / 3_600_000.0
+            return Math.pow(0.5, ageHours / halfLifeHours)
+        }
+
+        // Detrend: a rally (or crash) shifts the whole price curve, but a low percentile of a
+        // mixed-era pool stays stuck in the old era's left tail - decay alone can't fix that.
+        // Bucket comps by age, measure each bucket's median base against the freshest reliable
+        // bucket, and rescale every base to today's level. Flat market -> all factors ~1.
+        class Aged(val base: Double, val ageHours: Double, val weight: Double)
+        val aged = usableComps.mapNotNull { c ->
+            val b = compBase(c) ?: return@mapNotNull null
+            val age = if (newestSale != null && c.endedAtMillis != null) {
+                (newestSale - c.endedAtMillis) / 3_600_000.0
+            } else 0.0
+            Aged(b, age, weightOf(c))
+        }
+        val bucketHours = 12.0
+        val medianByBucket = aged.groupBy { (it.ageHours / bucketHours).toInt() }
+            .filterValues { it.size >= 3 }
+            .mapValues { (_, xs) -> xs.map { it.base }.sorted()[xs.size / 2] }
+        var marketDrift = 0.0
+        val detrended = if (medianByBucket.size >= 2) {
+            val refBucket = medianByBucket.keys.min()
+            val refMedian = medianByBucket.getValue(refBucket)
+            val oldestMedian = medianByBucket.getValue(medianByBucket.keys.max())
+            if (oldestMedian > 0) marketDrift = refMedian / oldestMedian - 1.0
+            aged.map {
+                val bucket = (it.ageHours / bucketHours).toInt()
+                // Nearest reliable bucket supplies the factor for thin buckets.
+                val median = medianByBucket[bucket]
+                    ?: medianByBucket.entries.minByOrNull { (k, _) -> kotlin.math.abs(k - bucket) }!!.value
+                val factor = (refMedian / median).coerceIn(0.5, 2.0)
+                it.base * factor to it.weight
+            }
+        } else {
+            aged.map { it.base to it.weight }
+        }
+
+        val trimmedPairs = trimOutlierPairs(detrended, settings.minComparableSamples)
+        val trimmedBases = trimmedPairs.map { it.first }
+        val base = if (trimmedPairs.isNotEmpty()) {
+            weightedPercentile(trimmedPairs, settings.fairValuePercentile)
+        } else null
+        if (kotlin.math.abs(marketDrift) >= 0.15 && base != null) {
+            val pct = (marketDrift * 100).toInt()
+            notes.add("market moved ${if (pct > 0) "+" else ""}$pct% over this window - estimate tracks the newest sales")
+        }
 
         // --- ask wall -> anchor for this item's build -----------------------------------------
         // Even a single as-is listing is a real wall - the buyer can literally click it.
@@ -285,16 +351,31 @@ object Valuator {
         return if (index > 0) RARITY_ORDER[index - 1] else tier
     }
 
-    /** IQR fence so a single troll listing can't drag the estimate. */
-    private fun trimOutliers(values: List<Double>, minSamples: Int): List<Double> {
-        if (values.size < minSamples) return values
-        val sorted = values.sorted()
-        val q1 = percentile(sorted, 25.0)
-        val q3 = percentile(sorted, 75.0)
+    /** IQR fence so a single troll listing can't drag the estimate; weights ride along. */
+    private fun trimOutlierPairs(pairs: List<Pair<Double, Double>>, minSamples: Int): List<Pair<Double, Double>> {
+        if (pairs.size < minSamples) return pairs
+        val sorted = pairs.sortedBy { it.first }
+        val values = sorted.map { it.first }
+        val q1 = percentile(values, 25.0)
+        val q3 = percentile(values, 75.0)
         val iqr = q3 - q1
         if (iqr <= 0.0) return sorted
-        val cleaned = sorted.filter { it in (q1 - 1.5 * iqr)..(q3 + 1.5 * iqr) }
+        val cleaned = sorted.filter { it.first in (q1 - 1.5 * iqr)..(q3 + 1.5 * iqr) }
         return cleaned.ifEmpty { sorted }
+    }
+
+    /** Percentile over a weighted distribution: the value where cumulative weight crosses p%. */
+    private fun weightedPercentile(pairs: List<Pair<Double, Double>>, p: Double): Double {
+        val sorted = pairs.sortedBy { it.first }
+        val total = sorted.sumOf { it.second }
+        if (total <= 0.0) return percentile(sorted.map { it.first }, p)
+        val threshold = total * p / 100.0
+        var cumulative = 0.0
+        for ((value, weight) in sorted) {
+            cumulative += weight
+            if (cumulative >= threshold) return value
+        }
+        return sorted.last().first
     }
 
     private fun percentile(sorted: List<Double>, p: Double): Double {

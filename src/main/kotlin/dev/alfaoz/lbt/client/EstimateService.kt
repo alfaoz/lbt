@@ -18,7 +18,7 @@ data class Estimate(val valuation: Valuation?, val loading: Boolean)
  */
 class EstimateService(val market: MarketData, private val repos: CommunityRepoClient) {
 
-    private data class MemoKey(val attrs: ItemAttributes, val nudge: Double)
+    private data class MemoKey(val attrs: ItemAttributes, val nudge: Double, val windowHours: Int)
     private class MemoEntry(val estimate: Estimate, val at: Long)
 
     private val memo = HashMap<MemoKey, MemoEntry>()
@@ -32,7 +32,7 @@ class EstimateService(val market: MarketData, private val repos: CommunityRepoCl
     @Synchronized
     fun estimate(attrs: ItemAttributes): Estimate {
         val config = LowballerClient.config
-        val key = MemoKey(attrs, config.manualDiscountAdjustment)
+        val key = MemoKey(attrs, config.manualDiscountAdjustment, config.priceWindowHours)
         val now = System.currentTimeMillis()
         memo[key]?.let { if (now - it.at < memoTtlMillis) return it.estimate }
         if (memo.size > 256) memo.clear()

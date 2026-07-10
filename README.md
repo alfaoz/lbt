@@ -16,7 +16,7 @@ dependencies:
 
 optional: [ModMenu](https://modrinth.com/mod/modmenu) gives you a config screen in the mod list.
 
-## how the _appraisal_ works
+## how the appraisal works
 
 ```
 you hover an item
@@ -89,4 +89,4 @@ not affiliated with hypixel or mojang.
 
 ## License
 
-MIT
+GNU GPL V3

@@ -62,22 +62,10 @@
 
   /* panel demo */
   .demo { display: flex; justify-content: center; padding: 26px 0 8px; }
-  .mcpanel {
-    font-family: var(--mono); font-size: 13.5px; line-height: 1.55;
-    background: rgba(10,8,14,.92); border: 1px solid var(--border); border-radius: 8px;
-    padding: 14px 18px 12px; min-width: 320px; max-width: 100%; overflow-x: auto;
+  .panelshot {
+    max-width: 100%; height: auto; image-rendering: pixelated; border-radius: 8px;
     box-shadow: 0 16px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(157,78,221,.06);
   }
-  .mcpanel .t { color: var(--accent); font-weight: 700; }
-  .mcpanel .g { color: var(--gold); }
-  .mcpanel .gr { color: var(--green); }
-  .mcpanel .aq { color: var(--aqua); }
-  .mcpanel .d { color: var(--dim); }
-  .mcpanel .y { color: #e3c565; }
-  .mcpanel .btnrow { margin-top: 6px; color: var(--dim); }
-  .mcpanel .kbtn { display: inline-block; border: 1px solid var(--border); border-radius: 4px;
-                   padding: 0 7px; margin-right: 4px; background: var(--panel2); color: var(--text); }
-  .caption { text-align: center; color: var(--dim); font-size: 13px; padding: 10px 0 0; }
 
   /* sections */
   section { padding: 64px 0 8px; }
@@ -85,46 +73,9 @@
   h2::before { content: "# "; color: var(--accent-deep); }
   .lede { color: var(--dim); max-width: 640px; margin-bottom: 28px; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-  .card {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
-  }
-  .card h3 { font-family: var(--mono); font-size: 15.5px; color: var(--accent); margin-bottom: 8px; }
-  .card p { color: var(--dim); font-size: 14.5px; }
-  .card p b { color: var(--text); font-weight: 600; }
 
-  /* how it prices */
-  .steps { counter-reset: s; display: grid; gap: 12px; max-width: 720px; }
-  .step { background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-          padding: 18px 20px 18px 62px; position: relative; }
-  .step::before {
-    counter-increment: s; content: counter(s);
-    position: absolute; left: 18px; top: 18px; width: 28px; height: 28px;
-    display: grid; place-items: center; border-radius: 8px;
-    background: rgba(157,78,221,.16); color: var(--accent);
-    font-family: var(--mono); font-weight: 700; font-size: 14px;
-  }
-  .step h3 { font-size: 15.5px; margin-bottom: 4px; }
-  .step p { color: var(--dim); font-size: 14.5px; }
 
-  /* install */
-  .shell {
-    font-family: var(--mono); font-size: 14px; background: var(--panel);
-    border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px;
-    overflow-x: auto; white-space: pre; color: var(--dim); max-width: 720px;
-  }
-  .shell b { color: var(--text); font-weight: 500; }
-  .shell .c { color: var(--accent); }
 
-  /* keybinds */
-  table { border-collapse: collapse; width: 100%; max-width: 620px; font-size: 14.5px; }
-  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-  th { font-family: var(--mono); color: var(--dim); font-weight: 500; font-size: 13px; }
-  kbd {
-    font-family: var(--mono); font-size: 13px; background: var(--panel2);
-    border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: 2px 8px;
-  }
-  .note { color: var(--dim); font-size: 13.5px; margin-top: 12px; max-width: 620px; }
 
   footer {
     margin-top: 80px; padding: 28px 0 40px; border-top: 1px solid var(--border);
@@ -157,68 +108,10 @@
 
 <div class="wrap">
   <div class="demo">
-    <div class="mcpanel" role="img" aria-label="In-game lbt panel showing a valuation breakdown">
-<span class="t">LBT</span>
-⚚ Ancient Shadow Assassin Helmet
-<span class="g">Lowball: 8.67M</span>
-<span class="gr">Fair: 10.08M  (high, n=56)</span>
-<span class="d">Resell nets 9.78M (fees 302.5k)</span>
-<span class="gr">Flip profit: +1.11M</span>
-<span class="d">Base item: 7.22M from 56 sales</span>
-<span class="d">Lowest matching BIN: 12.00M</span>
-<span class="d">BIN for this build: 10.08M</span>
-<span class="aq">Parts: 5.15M</span>
- Recombobulated: 3.56M
- 5★ (Wither essence x675): 706.6k
- Rejuvenate V: 437.7k
- Hot Potato Book x10: 321.9k
- Ancient (Precursor Gear): 115.3k
-<span class="y">! fair value capped at current BIN asks</span>
-<span class="btnrow"><span class="kbtn">−</span><span class="kbtn">+</span> adj +6%</span></div>
+    <img class="panelshot" src="panel.png" width="358"
+         alt="lbt panel: Withered Bouquet of Lies — lowball 34.90M, fair 40.58M from 100 sales, full parts breakdown">
   </div>
 </div>
-
-<section id="how">
-  <div class="wrap">
-    <h2>how it prices</h2>
-    <div class="steps">
-      <div class="step">
-        <h3>Match the real market</h3>
-        <p>Recent sold auctions of the same item, same displayed tier, same recomb state — pets also
-        level-banded and candy-matched. Falls back gracefully (with a visible warning) when a market is thin.</p>
-      </div>
-      <div class="step">
-        <h3>Normalize every comparable</h3>
-        <p>Each sale's own upgrades are priced off the bazaar and subtracted, leaving a distribution of
-        what the <em>bare item</em> trades for. Outliers are fenced off.</p>
-      </div>
-      <div class="step">
-        <h3>Rebuild for your item</h3>
-        <p>A conservative percentile of that base, plus <em>your</em> item's parts at resale-realistic
-        haircuts, blended with — and capped by — the live ask wall for your build.</p>
-      </div>
-      <div class="step">
-        <h3>Offer with a margin</h3>
-        <p>The lowball is fair value minus a liquidity-based discount you can nudge live, and never above
-        what the seller would net just listing it themselves.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="keys">
-  <div class="wrap">
-    <h2>keybinds</h2>
-    <table>
-      <tr><th>default</th><th>action</th></tr>
-      <tr><td><kbd>'</kbd></td><td>Toggle the item value panel</td></tr>
-      <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>Nudge the lowball discount down / up</td></tr>
-      <tr><td><kbd>R</kbd></td><td>Refresh prices for the hovered item</td></tr>
-    </table>
-    <p class="note">All rebindable in Controls → Lowball Tool. They work inside inventories and trade
-    windows too — and stay out of your way while a search bar or anvil field is focused.</p>
-  </div>
-</section>
 
 <footer>
   <div class="wrap">

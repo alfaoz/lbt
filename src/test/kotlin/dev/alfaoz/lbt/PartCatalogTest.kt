@@ -2,9 +2,12 @@ package dev.alfaoz.lbt
 
 import dev.alfaoz.lbt.valuation.ItemAttributes
 import dev.alfaoz.lbt.valuation.PartCatalog
+import dev.alfaoz.lbt.valuation.PriceSource
+import dev.alfaoz.lbt.valuation.priceParts
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 /** The enchant domain rules (SkyHanni-derived) that turn raw NBT into priceable parts. */
 class PartCatalogTest {
@@ -103,5 +106,27 @@ class PartCatalogTest {
         assertTrue("FUMING_POTATO_BOOK" in ids)
         assertTrue("IMPLOSION_SCROLL" in ids)
         assertTrue("PERFECT_JASPER_GEM" in ids)
+    }
+
+    @Test
+    fun `bazaar-only part kinds never fall back to AH lookups`() {
+        // Enchant books aren't an AH market; Coflnet 400s on ENCHANTMENT_* tags, and each
+        // hovered item prices dozens of comp parts - AH fallback here was a rate-limit storm.
+        val noAh = object : PriceSource {
+            override fun bazaarSell(productId: String): Double? = null
+            override fun bazaarBuy(productId: String): Double? = null
+            override fun lowestBin(tag: String): Double? =
+                fail("AH lookup for bazaar-only part: $tag")
+        }
+        val parts = catalog.partsFor(
+            item("ultimate_wise" to 5, "sharpness" to 6).copy(recombobulated = true, hotPotatoCount = 10),
+        )
+        val priced = priceParts(parts, noAh) { it.defaultHaircut }
+        assertTrue(priced.none { it.priced }, "nothing should price without bazaar data")
+
+        // AH-market kinds (scrolls, pet items) still fall through to BIN.
+        val scroll = catalog.partsFor(ItemAttributes(itemId = "HYPERION", abilityScrolls = listOf("IMPLOSION_SCROLL")))
+        val binPriced = priceParts(scroll, Fixtures.MapPrices(binsByTag = mapOf("IMPLOSION_SCROLL" to listOf(250_000_000.0)))) { it.defaultHaircut }
+        assertEquals("BIN", binPriced.single().source)
     }
 }

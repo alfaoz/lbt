@@ -23,14 +23,21 @@ internal object Http {
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build()
 
-    // Coflnet public tier allows 30 req/10s; everything shares this window to stay far under it.
-    private const val MAX_REQUESTS_PER_WINDOW = 20
+    // Coflnet public tier allows 30 req/10s; everything shares this window to stay far under it
+    // (other mods on the same IP eat into the same server-side budget).
+    private const val MAX_REQUESTS_PER_WINDOW = 15
     private val WINDOW_MILLIS = Duration.ofSeconds(10).toMillis()
     private val limiterMutex = Mutex()
     private val recentRequests = ArrayDeque<Long>()
 
+    // When the server says 429 anyway, stop asking for a full window instead of queueing a
+    // retry storm - callers treat null as a briefly-cached failure and refetch later.
+    @Volatile private var cooldownUntil = 0L
+
     suspend fun getString(url: String, timeoutSeconds: Long = 15): String? {
+        if (System.currentTimeMillis() < cooldownUntil) return null
         awaitRateLimit()
+        if (System.currentTimeMillis() < cooldownUntil) return null
         return withContext(Dispatchers.IO) {
             try {
                 val request = HttpRequest.newBuilder()
@@ -40,10 +47,17 @@ internal object Http {
                     .GET()
                     .build()
                 val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-                if (response.statusCode() == 200) response.body()
-                else {
-                    marketLogger.warn("GET $url -> ${response.statusCode()}")
-                    null
+                when {
+                    response.statusCode() == 200 -> response.body()
+                    response.statusCode() == 429 -> {
+                        cooldownUntil = System.currentTimeMillis() + WINDOW_MILLIS + 2000
+                        marketLogger.warn("GET $url -> 429; pausing market requests for ${(WINDOW_MILLIS + 2000) / 1000}s")
+                        null
+                    }
+                    else -> {
+                        marketLogger.warn("GET $url -> ${response.statusCode()}")
+                        null
+                    }
                 }
             } catch (e: Exception) {
                 marketLogger.warn("GET $url failed: ${e.message}")

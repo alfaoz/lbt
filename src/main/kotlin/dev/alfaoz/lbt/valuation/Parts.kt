@@ -3,8 +3,13 @@ package dev.alfaoz.lbt.valuation
 /**
  * Category of value-bearing part. The haircut - what fraction of the part's market price
  * survives being applied to an item, from a buyer's perspective - is looked up per kind.
+ *
+ * [ahFallback]: whether a bazaar miss may fall back to an AH lowest-BIN lookup. Only kinds
+ * whose products genuinely trade on the AH get it - enchant books, essence, potato books etc.
+ * are bazaar-only, and asking Coflnet for ENCHANTMENT_* tags just burns the rate budget on
+ * 400s (each hovered item prices dozens of comp parts).
  */
-enum class PartKind(val defaultHaircut: Double) {
+enum class PartKind(val defaultHaircut: Double, val ahFallback: Boolean = false) {
     /** Applied enchant books: can't be extracted, buyers pay well under book price. */
     ENCHANT(0.55),
 
@@ -29,28 +34,28 @@ enum class PartKind(val defaultHaircut: Double) {
     GEMSTONE(0.90),
 
     /** Hyperion-class ability scrolls: effectively define the item, near-full value. */
-    ABILITY_SCROLL(0.95),
+    ABILITY_SCROLL(0.95, ahFallback = true),
 
     /** Drill parts are removable. */
-    DRILL_PART(0.90),
+    DRILL_PART(0.90, ahFallback = true),
 
     /** Reforge stone: mostly sunk (apply cost not recoverable, stone can't be removed). */
-    REFORGE(0.35),
+    REFORGE(0.35, ahFallback = true),
 
-    /** Cosmetics: skins/dyes applied to the item. */
-    COSMETIC(0.80),
+    /** Cosmetics: skins/dyes applied to the item - AH-only market. */
+    COSMETIC(0.80, ahFallback = true),
 
-    RUNE(0.50),
+    RUNE(0.50, ahFallback = true),
     ENRICHMENT(0.50),
 
     /** Etherwarp conduit + merger + tuners on an AOTV. */
-    ETHERWARP(0.70),
+    ETHERWARP(0.70, ahFallback = true),
 
     /** One-shot consumable upgrades (art of war, wood singularity, jalapeno book, ...). */
     CONSUMABLE(0.45),
 
     /** Pet held item: freely removable, resells near its own market price. */
-    PET_ITEM(0.85),
+    PET_ITEM(0.85, ahFallback = true),
 }
 
 /** One value-bearing component of an item, before market pricing. */
@@ -107,7 +112,9 @@ fun priceParts(parts: List<Part>, source: PriceSource, haircutFor: (PartKind) ->
         } else {
             val bazaarSell = source.bazaarSell(part.productId)
             val bazaarBuy = source.bazaarBuy(part.productId)
-            val bin = if (bazaarSell == null && bazaarBuy == null) source.lowestBin(part.productId) else null
+            val bin = if (bazaarSell == null && bazaarBuy == null && part.kind.ahFallback) {
+                source.lowestBin(part.productId)
+            } else null
             val (unit, src) = when {
                 bazaarSell != null && bazaarSell > 0 -> bazaarSell to "bazaar"
                 bazaarBuy != null && bazaarBuy > 0 -> bazaarBuy to "bazaar"

@@ -5,3 +5,7 @@ run/
 .idea/
 *.iml
 .DS_Store
+
+# kept local only
+docs/
+site/

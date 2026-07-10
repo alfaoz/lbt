@@ -10,7 +10,7 @@ hover any item and lbt tells you what it *actually* sells for (from real sold au
 
 1. install **Fabric Loader** for Minecraft **26.1.2**
 2. drop these in your `mods/` folder:
-   - [`lbt-0.2.0.jar`](https://github.com/alfaoz/lbt/releases/latest) — from releases
+   - [`lbt-1.0.0.jar`](https://github.com/alfaoz/lbt/releases/latest) — from releases
    - [Fabric API](https://modrinth.com/mod/fabric-api)
    - [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
 3. launch, join hypixel skyblock, hover anything.

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "lbt",
+  "version": "${version}",
+  "name": "Lowball Tool",
+  "description": "Estimates fair value and suggests a lowball offer for Hypixel Skyblock items by reading their NBT modifiers and comparable market data.",
+  "authors": ["alfaoz"],
+  "contact": {
+    "homepage": "https://alfaoz.dev"
+  },
+  "environment": "client",
+  "icon": "assets/lbt/icon.png",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.alfaoz.lbt.LowballerClient"
+      }
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*",
+    "minecraft": "26.1.2"
+  }
+}

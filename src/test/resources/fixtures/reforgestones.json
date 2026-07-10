@@ -1,0 +1,510 @@
+{
+ "DRAGON_CLAW": {
+  "internalName": "DRAGON_CLAW",
+  "reforgeName": "Fabled",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "SWORD",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 60000,
+   "UNCOMMON": 125000,
+   "RARE": 250000,
+   "EPIC": 500000,
+   "LEGENDARY": 1000000,
+   "MYTHIC": 2000000
+  },
+  "reforgeAbility": "Critical hits have a chance to deal up to \u00a7a15% \u00a77extra damage.",
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 30,
+    "crit_damage": 15
+   },
+   "UNCOMMON": {
+    "strength": 35,
+    "crit_damage": 20
+   },
+   "RARE": {
+    "strength": 40,
+    "crit_damage": 25
+   },
+   "EPIC": {
+    "strength": 50,
+    "crit_damage": 32
+   },
+   "LEGENDARY": {
+    "strength": 60,
+    "crit_damage": 40
+   },
+   "MYTHIC": {
+    "strength": 75,
+    "crit_damage": 50
+   }
+  }
+ },
+ "DRAGON_HORN": {
+  "internalName": "DRAGON_HORN",
+  "reforgeName": "Renowned",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "ARMOR",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 60000,
+   "UNCOMMON": 125000,
+   "RARE": 250000,
+   "EPIC": 500000,
+   "LEGENDARY": 1000000,
+   "MYTHIC": 2000000
+  },
+  "reforgeAbility": "\u00a77Increases all \u00a7cCombat \u00a77stats and \u00a7b\u272f \u00a7bMagic Find \u00a77by \u00a7a+1%\u00a77.",
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 3,
+    "crit_chance": 2,
+    "crit_damage": 3,
+    "bonus_attack_speed": 1,
+    "health": 2,
+    "defense": 2,
+    "speed": 1,
+    "intelligence": 3
+   },
+   "UNCOMMON": {
+    "strength": 4,
+    "crit_chance": 4,
+    "crit_damage": 4,
+    "bonus_attack_speed": 1,
+    "health": 3,
+    "defense": 3,
+    "speed": 1,
+    "intelligence": 4
+   },
+   "RARE": {
+    "strength": 6,
+    "crit_chance": 6,
+    "crit_damage": 6,
+    "bonus_attack_speed": 2,
+    "health": 4,
+    "defense": 4,
+    "speed": 1,
+    "intelligence": 6
+   },
+   "EPIC": {
+    "strength": 8,
+    "crit_chance": 8,
+    "crit_damage": 8,
+    "bonus_attack_speed": 3,
+    "health": 6,
+    "defense": 6,
+    "speed": 1,
+    "intelligence": 8
+   },
+   "LEGENDARY": {
+    "strength": 10,
+    "crit_chance": 10,
+    "crit_damage": 10,
+    "bonus_attack_speed": 4,
+    "health": 8,
+    "defense": 8,
+    "speed": 1,
+    "intelligence": 10
+   },
+   "MYTHIC": {
+    "strength": 12,
+    "crit_chance": 12,
+    "crit_damage": 12,
+    "bonus_attack_speed": 5,
+    "health": 10,
+    "defense": 10,
+    "speed": 1,
+    "intelligence": 12
+   }
+  }
+ },
+ "GIANT_TOOTH": {
+  "internalName": "GIANT_TOOTH",
+  "reforgeName": "Giant",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "ARMOR",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 60000,
+   "UNCOMMON": 125000,
+   "RARE": 250000,
+   "EPIC": 500000,
+   "LEGENDARY": 1000000,
+   "MYTHIC": 2000000
+  },
+  "reforgeStats": {
+   "COMMON": {
+    "health": 50
+   },
+   "UNCOMMON": {
+    "health": 60
+   },
+   "RARE": {
+    "health": 80
+   },
+   "EPIC": {
+    "health": 120
+   },
+   "LEGENDARY": {
+    "health": 180
+   },
+   "MYTHIC": {
+    "health": 240
+   }
+  }
+ },
+ "MOIL_LOG": {
+  "internalName": "MOIL_LOG",
+  "reforgeName": "Moil",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "AXE",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 1000,
+   "UNCOMMON": 5000,
+   "RARE": 10000,
+   "EPIC": 15000,
+   "LEGENDARY": 50000,
+   "MYTHIC": 75000
+  },
+  "reforgeAbility": {
+   "COMMON": "Grants \u00a73+1\u262f Foraging Wisdom\u00a77.",
+   "UNCOMMON": "Grants \u00a73+1\u262f Foraging Wisdom\u00a77.",
+   "RARE": "Grants \u00a73+2\u262f Foraging Wisdom\u00a77.",
+   "EPIC": "Grants \u00a73+2\u262f Foraging Wisdom\u00a77.",
+   "LEGENDARY": "Grants \u00a73+3\u262f Foraging Wisdom\u00a77.",
+   "MYTHIC": "Grants \u00a73+3\u262f Foraging Wisdom\u00a77."
+  },
+  "reforgeStats": {
+   "COMMON": {
+    "foraging_wisdom": 1
+   },
+   "UNCOMMON": {
+    "foraging_wisdom": 1
+   },
+   "RARE": {
+    "foraging_wisdom": 2
+   },
+   "EPIC": {
+    "foraging_wisdom": 2
+   },
+   "LEGENDARY": {
+    "foraging_wisdom": 3
+   },
+   "MYTHIC": {
+    "foraging_wisdom": 3
+   }
+  }
+ },
+ "OPTICAL_LENS": {
+  "internalName": "OPTICAL_LENS",
+  "reforgeName": "Precise",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "BOW",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 30000,
+   "UNCOMMON": 75000,
+   "RARE": 150000,
+   "EPIC": 300000,
+   "LEGENDARY": 600000,
+   "MYTHIC": 1200000
+  },
+  "reforgeAbility": "Deal \u00a7a+10% \u00a77extra damage when arrows hit the head of a mob.",
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 3,
+    "crit_chance": 8,
+    "crit_damage": 5
+   },
+   "UNCOMMON": {
+    "strength": 7,
+    "crit_chance": 9,
+    "crit_damage": 10
+   },
+   "RARE": {
+    "strength": 12,
+    "crit_chance": 10,
+    "crit_damage": 18
+   },
+   "EPIC": {
+    "strength": 18,
+    "crit_chance": 11,
+    "crit_damage": 32
+   },
+   "LEGENDARY": {
+    "strength": 25,
+    "crit_chance": 13,
+    "crit_damage": 50
+   },
+   "MYTHIC": {
+    "strength": 34,
+    "crit_chance": 15,
+    "crit_damage": 70
+   }
+  }
+ },
+ "PRECURSOR_GEAR": {
+  "internalName": "PRECURSOR_GEAR",
+  "reforgeName": "Ancient",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "ARMOR",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 10000,
+   "UNCOMMON": 20000,
+   "RARE": 30000,
+   "EPIC": 40000,
+   "LEGENDARY": 50000,
+   "MYTHIC": 60000
+  },
+  "reforgeAbility": "Grants \u00a7a+1 \u00a79\u2620 Crit Damage \u00a77per \u00a7cCatacombs \u00a77level.",
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 4,
+    "crit_damage": 3,
+    "health": 7,
+    "defense": 7,
+    "intelligence": 6
+   },
+   "UNCOMMON": {
+    "strength": 8,
+    "crit_chance": 5,
+    "health": 7,
+    "defense": 7,
+    "intelligence": 9
+   },
+   "RARE": {
+    "strength": 12,
+    "crit_chance": 7,
+    "health": 7,
+    "defense": 7,
+    "intelligence": 12
+   },
+   "EPIC": {
+    "strength": 18,
+    "crit_chance": 9,
+    "health": 7,
+    "defense": 7,
+    "intelligence": 16
+   },
+   "LEGENDARY": {
+    "strength": 25,
+    "crit_chance": 12,
+    "health": 7,
+    "defense": 7,
+    "intelligence": 20
+   },
+   "MYTHIC": {
+    "strength": 35,
+    "crit_chance": 15,
+    "health": 7,
+    "defense": 7,
+    "intelligence": 25
+   }
+  }
+ },
+ "SPIRIT_DECOY": {
+  "internalName": "SPIRIT_DECOY",
+  "reforgeName": "Spiritual",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "BOW",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 60000,
+   "UNCOMMON": 125000,
+   "RARE": 250000,
+   "EPIC": 500000,
+   "LEGENDARY": 1000000,
+   "MYTHIC": 2000000
+  },
+  "reforgeAbility": "Grants a \u00a7a10% \u00a77chance to spawn a Spirit Decoy when you kill a enemy in a dungeon.",
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 4,
+    "crit_chance": 7,
+    "crit_damage": 10
+   },
+   "UNCOMMON": {
+    "strength": 8,
+    "crit_chance": 8,
+    "crit_damage": 15
+   },
+   "RARE": {
+    "strength": 14,
+    "crit_chance": 9,
+    "crit_damage": 23
+   },
+   "EPIC": {
+    "strength": 20,
+    "crit_chance": 10,
+    "crit_damage": 37
+   },
+   "LEGENDARY": {
+    "strength": 28,
+    "crit_chance": 12,
+    "crit_damage": 55
+   },
+   "MYTHIC": {
+    "strength": 38,
+    "crit_chance": 14,
+    "crit_damage": 75
+   }
+  }
+ },
+ "TOIL_LOG": {
+  "internalName": "TOIL_LOG",
+  "reforgeName": "Toil",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "AXE",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 10000,
+   "UNCOMMON": 10000,
+   "RARE": 10000,
+   "EPIC": 10000,
+   "LEGENDARY": 10000,
+   "MYTHIC": 10000
+  },
+  "reforgeAbility": {
+   "COMMON": "\u00a77Grants \u00a73+1\u262f Foraging Wisdom\u00a77.",
+   "UNCOMMON": "\u00a77Grants \u00a73+2\u262f Foraging Wisdom\u00a77.",
+   "RARE": "\u00a77Grants \u00a73+3\u262f Foraging Wisdom\u00a77.",
+   "EPIC": "\u00a77Grants \u00a73+4\u262f Foraging Wisdom\u00a77.",
+   "LEGENDARY": "\u00a77Grants \u00a73+5\u262f Foraging Wisdom\u00a77.",
+   "MYTHIC": "\u00a77Grants \u00a73+6\u262f Foraging Wisdom\u00a77."
+  },
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 5,
+    "crit_damage": 5,
+    "foraging_wisdom": 1
+   },
+   "UNCOMMON": {
+    "strength": 7,
+    "crit_damage": 7,
+    "foraging_wisdom": 2
+   },
+   "RARE": {
+    "strength": 10,
+    "crit_damage": 10,
+    "foraging_wisdom": 3
+   },
+   "EPIC": {
+    "strength": 13,
+    "crit_damage": 13,
+    "foraging_wisdom": 4
+   },
+   "LEGENDARY": {
+    "strength": 16,
+    "crit_damage": 16,
+    "foraging_wisdom": 5
+   },
+   "MYTHIC": {
+    "strength": 20,
+    "crit_damage": 20,
+    "foraging_wisdom": 6
+   }
+  }
+ },
+ "WITHER_BLOOD": {
+  "internalName": "WITHER_BLOOD",
+  "reforgeName": "Withered",
+  "reforgeType": "blacksmith/reforge_stone",
+  "itemTypes": "SWORD",
+  "requiredRarities": [
+   "COMMON",
+   "UNCOMMON",
+   "RARE",
+   "EPIC",
+   "LEGENDARY",
+   "MYTHIC"
+  ],
+  "reforgeCosts": {
+   "COMMON": 10000,
+   "UNCOMMON": 20000,
+   "RARE": 30000,
+   "EPIC": 40000,
+   "LEGENDARY": 50000,
+   "MYTHIC": 60000
+  },
+  "reforgeAbility": "Grants \u00a7a+1 \u00a7c\u2741 Strength \u00a77per \u00a7cCatacombs \u00a77level.",
+  "reforgeStats": {
+   "COMMON": {
+    "strength": 60
+   },
+   "UNCOMMON": {
+    "strength": 75
+   },
+   "RARE": {
+    "strength": 90
+   },
+   "EPIC": {
+    "strength": 110
+   },
+   "LEGENDARY": {
+    "strength": 135
+   },
+   "MYTHIC": {
+    "strength": 170
+   }
+  }
+ }
+}

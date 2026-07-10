@@ -12,6 +12,7 @@ base {
 
 repositories {
     maven("https://maven.fabricmc.net/") { name = "Fabric" }
+    maven("https://maven.terraformersmc.com/releases/") { name = "Terraformers" }
     mavenCentral()
 }
 
@@ -20,6 +21,9 @@ dependencies {
     implementation("net.fabricmc:fabric-loader:${project.property("loader_version")}")
     implementation("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_version")}")
     implementation("net.fabricmc:fabric-language-kotlin:${project.property("fabric_kotlin_version")}")
+    // Config screen in the mod list; only the tiny api package is referenced, present at
+    // runtime only when the user has ModMenu installed (entrypoint is skipped otherwise).
+    compileOnly("com.terraformersmc:modmenu:18.0.0")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")

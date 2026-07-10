@@ -26,6 +26,8 @@ data class LowballerConfig(
     /** PartKind name -> haircut override (fraction of part price a buyer credits once applied). */
     var haircutOverrides: MutableMap<String, Double> = mutableMapOf(),
     var itemPanelVisible: Boolean = true,
+    /** Diagnostic "N part(s) had no market price" line - off unless enabled in the config screen. */
+    var showUnpricedPartsNote: Boolean = false,
     var panelPositions: MutableMap<String, IntArray> = mutableMapOf(),
 ) {
     fun valuationSettings() = ValuationSettings(

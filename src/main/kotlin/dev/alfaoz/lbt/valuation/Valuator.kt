@@ -62,6 +62,8 @@ data class Valuation(
     /** True when the offer was clamped by the ask-wall ceiling rather than the discount. */
     val ceilingBound: Boolean,
     val notes: List<String>,
+    /** Parts with no market price anywhere (counted as 0); surfaced only when configured. */
+    val unpricedPartCount: Int = 0,
 ) {
     /** Exact AH fees (listing tier + collection tax) if this resells at fair value. */
     val resaleFees: Double get() = AhFees.total(fairValue)
@@ -106,7 +108,6 @@ object Valuator {
             .sortedByDescending { it.value }
         val partsTotal = targetParts.sumOf { it.value }
         val unpricedCount = targetParts.count { !it.priced }
-        if (unpricedCount > 0) notes.add("$unpricedCount part(s) had no market price and count as 0")
 
         fun compBase(comp: Comp): Double? {
             val unitPrice = comp.price / comp.count.coerceAtLeast(1)
@@ -147,7 +148,7 @@ object Valuator {
         var binFair = binAnchor?.times(settings.binAskDiscount)
         if (compEstimate != null && binFair != null && binFair > compEstimate * settings.inflatedAskFactor) {
             binFair = compEstimate * settings.inflatedAskFactor
-            notes.add("current asks look inflated vs recent sold prices - sold data outranks them")
+            notes.add("current asks look inflated")
         }
 
         var fair = when {
@@ -205,6 +206,7 @@ object Valuator {
             binAnchor = binAnchor,
             ceilingBound = ceilingBound,
             notes = notes,
+            unpricedPartCount = unpricedCount,
         )
     }
 

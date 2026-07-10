@@ -16,7 +16,16 @@
         "adapter": "kotlin",
         "value": "dev.alfaoz.lbt.LowballerClient"
       }
+    ],
+    "modmenu": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.alfaoz.lbt.ModMenuEntry"
+      }
     ]
+  },
+  "suggests": {
+    "modmenu": "*"
   },
   "depends": {
     "fabricloader": ">=0.19.0",

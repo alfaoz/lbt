@@ -129,7 +129,7 @@ class TradePanel(x: Int, y: Int) : Panel("trade", x, y) {
             }
             out.add(Row(" ${attrs.displayName.take(22)}: ${formatCoins(v.fairValue)} (n=${v.compCount})", liqColor))
         }
-        if (pending > 0) out.add(Row(" $pending item(s) loading...", PanelColors.DIM))
+        if (pending > 0) out.add(Row(" $pending item(s) fetching ${Spinner.frame()}", PanelColors.DIM))
         val totalLabel = if (coinsTotal > 0 && fairTotal > 0) {
             " Total ${formatCoins(fairTotal + coinsTotal)} (items + coins)"
         } else {

@@ -57,7 +57,7 @@ class ItemValuePanel(x: Int, y: Int) : Panel("item_value", x, y) {
         out.add(name.take(32) to PanelColors.TEXT)
 
         if (v == null) {
-            out.add((if (estimate.loading) "Loading market data..." else "No market data found") to PanelColors.DIM)
+            out.add((if (estimate.loading) "Fetching market data ${Spinner.frame()}" else "No market data found") to PanelColors.DIM)
             return out
         }
 
@@ -94,8 +94,11 @@ class ItemValuePanel(x: Int, y: Int) : Panel("item_value", x, y) {
             for (part in priced.take(7)) out.add(partLine(part) to PanelColors.TEXT)
             if (priced.size > 7) out.add(" +${priced.size - 7} smaller parts" to PanelColors.DIM)
         }
+        if (v.unpricedPartCount > 0 && LowballerClient.config.showUnpricedPartsNote) {
+            out.add("! ${v.unpricedPartCount} part(s) had no market price" to PanelColors.YELLOW)
+        }
         for (note in v.notes) out.add("! $note" to PanelColors.YELLOW)
-        if (estimate.loading) out.add("(still loading - may refine)" to PanelColors.DIM)
+        if (estimate.loading) out.add("refining ${Spinner.frame()}" to PanelColors.DIM)
         return out
     }
 

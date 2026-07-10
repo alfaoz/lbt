@@ -75,7 +75,7 @@ object LowballerClient : ClientModInitializer {
                 Component.literal(
                     when {
                         v != null -> "§6Lowball: §e~${formatCoins(v.suggestedOffer)} §7(fair ${formatCoins(v.fairValue)}, n=${v.compCount})"
-                        estimate.loading -> "§7Lowball: loading market data..."
+                        estimate.loading -> "§7Lowball: fetching ${dev.alfaoz.lbt.client.gui.Spinner.frame()}"
                         else -> "§8Lowball: no market data"
                     },
                 ),

@@ -16,16 +16,9 @@ dependencies:
 
 optional: [ModMenu](https://modrinth.com/mod/modmenu) gives you a config screen in the mod list.
 
-## how the appraisal works
+## the appraisal
 
 ```
-you hover an item
-        |
-        v
-NBT is parsed: tier, recomb, stars, reforge, enchants,
-gems, scrolls, pet level / held item / candy, ...
-        |
-        v
 recent sold auctions of the same market are fetched
         |
         v
@@ -49,11 +42,9 @@ the `adj` percentage in the panel footer stacks on top of the liquidity discount
 
 ## data sources
 
-- [Coflnet](https://sky.coflnet.com) — sold auctions + active BINs
-- [Hypixel API](https://api.hypixel.net) — bulk bazaar prices
-- [NEU](https://github.com/NotEnoughUpdates/NotEnoughUpdates-REPO) & [SkyHanni](https://github.com/hannibal002/SkyHanni-REPO) community repos — essence costs, reforge stones, enchant rules
-
-requests are rate-limited and cached (bazaar 5 min, sold 10 min, BINs 60 s — or instantly via the refresh keybind).
+- [Coflnet](https://sky.coflnet.com) for sold auctions + active BINs
+- [Hypixel API](https://api.hypixel.net) for bulk bazaar prices
+- [NEU](https://github.com/NotEnoughUpdates/NotEnoughUpdates-REPO) & [SkyHanni](https://github.com/hannibal002/SkyHanni-REPO) community repos for essence costs, reforge stones, enchant rules
 
 !!! not affiliated with hypixel or mojang.
 
